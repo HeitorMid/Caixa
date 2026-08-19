@@ -13,9 +13,7 @@
   --purple:#7b45d4;
   --red:#e54848;
 }
-*{
-  box-sizing:border-box
-}
+*{box-sizing:border-box}
 html,body{margin:0;min-height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
 button,input,select{font:inherit}
 button{cursor:pointer}
@@ -193,3 +191,17 @@ button{cursor:pointer}
   .history-actions{grid-column:auto}
   .section-head{align-items:stretch;flex-direction:column}
 }
+
+
+.daily-detail-section{margin-top:22px}
+.detail-title-row{display:flex;justify-content:space-between;align-items:end;margin-bottom:10px}
+.detail-title-row h3{margin:0 0 4px;font-size:16px}
+.detail-title-row p{margin:0;color:var(--muted);font-size:13px}
+.sales-table-wrap{width:100%;overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:#fff}
+.sales-table{width:100%;border-collapse:collapse;min-width:650px}
+.sales-table.detailed{min-width:1050px}
+.sales-table th,.sales-table td{padding:12px 13px;border-bottom:1px solid #edf0ee;text-align:left;font-size:13px;white-space:nowrap}
+.sales-table th{background:#f7f9f8;color:var(--green-dark);font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+.sales-table tbody tr:last-child td{border-bottom:0}
+.sales-table tbody tr:hover{background:#fbfdfb}
+.category-badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:var(--green-soft);color:var(--green-dark);font-size:11px;font-weight:800}

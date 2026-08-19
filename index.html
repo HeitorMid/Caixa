@@ -82,6 +82,7 @@
                     <li>Casal — R$ 75,00 por pessoa</li>
                     <li>Mensal normal — R$ 85,00</li>
                     <li>3x por semana — R$ 65,00</li>
+                    <li>Trimestral (3 meses) — R$ 240,00</li>
                   </ul>
                   <button class="primary-btn" data-launch="mensalidade">LANÇAR MENSALIDADE</button>
                 </article>
@@ -113,10 +114,9 @@
             <aside class="summary-column">
               <section class="panel">
                 <div class="panel-title">RESUMO DO EXPEDIENTE</div>
-                <div class="summary-row"><span>Dinheiro</span><strong id="sumDinheiro">R$ 0,00</strong></div>
-                <div class="summary-row"><span>Pix</span><strong id="sumPix">R$ 0,00</strong></div>
-                <div class="summary-row"><span>Débito</span><strong id="sumDebito">R$ 0,00</strong></div>
-                <div class="summary-row"><span>Crédito</span><strong id="sumCredito">R$ 0,00</strong></div>
+                <div class="summary-row"><span>Mensalidades</span><strong id="sumMensalidade">R$ 0,00</strong></div>
+                <div class="summary-row"><span>Esquentas</span><strong id="sumEsquenta">R$ 0,00</strong></div>
+                <div class="summary-row"><span>Freezer</span><strong id="sumFreezer">R$ 0,00</strong></div>
                 <div class="summary-row total"><span>TOTAL GERAL</span><strong id="sumTotal">R$ 0,00</strong></div>
               </section>
 
@@ -164,7 +164,25 @@
               <div class="metric-card grand"><span>Total do dia</span><strong id="dailyTotal">R$ 0,00</strong></div>
             </div>
 
-            <div id="dailyShiftList" class="history-list"></div>
+            <section class="daily-detail-section">
+              <div class="detail-title-row">
+                <div>
+                  <h3>Resumo por item</h3>
+                  <p>Quantidade vendida e valor total de cada plano, diária ou produto.</p>
+                </div>
+              </div>
+              <div id="dailyItemSummary" class="sales-table-wrap"></div>
+            </section>
+
+            <section class="daily-detail-section">
+              <div class="detail-title-row">
+                <div>
+                  <h3>Vendas detalhadas</h3>
+                  <p>Todos os lançamentos do dia, com funcionário, turno, forma de pagamento e valores.</p>
+                </div>
+              </div>
+              <div id="dailySalesDetail" class="sales-table-wrap"></div>
+            </section>
           </section>
         </div>
 
@@ -193,6 +211,7 @@
                   <div><span>Casal</span><strong>R$ 75,00 / pessoa</strong></div>
                   <div><span>Mensal normal</span><strong>R$ 85,00</strong></div>
                   <div><span>3x por semana</span><strong>R$ 65,00</strong></div>
+                  <div><span>Trimestral (3 meses)</span><strong>R$ 240,00</strong></div>
                 </div>
               </article>
               <article>

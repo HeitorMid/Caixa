@@ -4,7 +4,8 @@ const PLANS = [
   {id:"familia", name:"Família", price:75, perPerson:true},
   {id:"casal", name:"Casal", price:75, perPerson:true},
   {id:"mensal", name:"Mensal normal", price:85},
-  {id:"3x", name:"3x por semana", price:65}
+  {id:"3x", name:"3x por semana", price:65},
+  {id:"trimestral", name:"Trimestral", price:240}
 ];
 const FREEZER = [
   {id:"agua", name:"Água", price:3},
@@ -17,10 +18,21 @@ const PAYMENTS = ["Dinheiro","Pix","Débito","Crédito"];
 const SHIFTS = ["06:00 às 12:00","14:00 às 20:00","20:00 às 22:00"];
 
 const state = {
-  employees: load("inovafit_employees", ["Heitor","Elber","Manu"]),
+  employees: load("inovafit_employees", ["Heitor","Elbe","Manu"]),
   currentCash: load("inovafit_current_cash", null),
   history: load("inovafit_history", [])
 };
+
+if (
+  Array.isArray(state.employees) &&
+  state.employees.length === 3 &&
+  state.employees.includes("Itur") &&
+  state.employees.includes("Elber") &&
+  state.employees.includes("Manu")
+) {
+  state.employees = ["Heitor","Elbe","Manu"];
+  localStorage.setItem("inovafit_employees", JSON.stringify(state.employees));
+}
 
 function load(key, fallback){
   try{
@@ -85,14 +97,14 @@ function renderCash(){
   document.getElementById("statusOpenedAt").textContent = cash ? `${dateBR(cash.date)} ${timeBR(cash.openedAt)}` : "—";
   document.getElementById("openCashBtn").textContent = cash ? "TROCAR / REABRIR" : "ABRIR CAIXA";
 
-  const totals=transactionTotals(cash?.transactions);
-  let grand=0;
-  for(const p of PAYMENTS){
-    const id = "sum"+p.normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-    const el=document.getElementById(id);
-    if(el) el.textContent=money(totals[p]);
-    grand+=totals[p]||0;
+  const byCategory={Mensalidade:0,Esquenta:0,Freezer:0};
+  for(const t of (cash?.transactions || [])){
+    byCategory[t.category]=(byCategory[t.category]||0)+Number(t.total||0);
   }
+  const grand=byCategory.Mensalidade+byCategory.Esquenta+byCategory.Freezer;
+  document.getElementById("sumMensalidade").textContent=money(byCategory.Mensalidade);
+  document.getElementById("sumEsquenta").textContent=money(byCategory.Esquenta);
+  document.getElementById("sumFreezer").textContent=money(byCategory.Freezer);
   document.getElementById("sumTotal").textContent=money(grand);
 
   const recent=document.getElementById("recentTransactions");
@@ -360,29 +372,115 @@ function reopenCash(id){
 
 function renderDailySummary(){
   const date=document.getElementById("summaryDateFilter").value||isoDate();
-  const list=state.history.filter(c=>c.date===date);
-  if(state.currentCash?.date===date) list.push(state.currentCash);
+  const list=state.history.filter(c=>c.date===date).map(c=>({...c}));
+  if(state.currentCash?.date===date) list.push({...state.currentCash});
 
-  const all=list.flatMap(c=>c.transactions||[]);
-  const totals=transactionTotals(all);
+  const allSales=[];
+  for(const cash of list){
+    for(const t of (cash.transactions||[])){
+      allSales.push({
+        ...t,
+        employee:cash.employee,
+        shift:cash.shift,
+        cashStatus:cash.status
+      });
+    }
+  }
+
+  const totals=transactionTotals(allSales);
   document.getElementById("dailyDinheiro").textContent=money(totals.Dinheiro);
   document.getElementById("dailyPix").textContent=money(totals.Pix);
   document.getElementById("dailyDebito").textContent=money(totals["Débito"]);
   document.getElementById("dailyCredito").textContent=money(totals["Crédito"]);
   document.getElementById("dailyTotal").textContent=money(Object.values(totals).reduce((a,b)=>a+b,0));
 
-  const wrap=document.getElementById("dailyShiftList");
-  wrap.innerHTML=list.length?list.map(c=>{
-    const t=transactionTotals(c.transactions);
-    const total=Object.values(t).reduce((a,b)=>a+b,0);
-    return `<div class="history-card">
-      <div><small>Funcionário</small><strong>${c.employee}</strong></div>
-      <div><small>Turno</small><strong>${c.shift}</strong></div>
-      <div><small>Status</small><strong>${c.status==="open"?"Aberto":"Finalizado"}</strong></div>
-      <div><small>Total</small><strong>${money(total)}</strong></div>
-      <div></div>
-    </div>`;
-  }).join(""):`<div class="notice">Nenhum expediente nesta data.</div>`;
+  // Resumo agregado por categoria + item
+  const grouped={};
+  for(const sale of allSales){
+    const key=`${sale.category}|||${sale.item}`;
+    if(!grouped[key]){
+      grouped[key]={
+        category:sale.category,
+        item:sale.item,
+        quantity:0,
+        total:0
+      };
+    }
+    grouped[key].quantity += Number(sale.quantity||1);
+    grouped[key].total += Number(sale.total||0);
+  }
+
+  const itemSummary=document.getElementById("dailyItemSummary");
+  const groupedRows=Object.values(grouped).sort((a,b)=>{
+    if(a.category!==b.category) return a.category.localeCompare(b.category,"pt-BR");
+    return a.item.localeCompare(b.item,"pt-BR");
+  });
+
+  if(!groupedRows.length){
+    itemSummary.innerHTML=`<div class="notice">Nenhuma venda registrada nesta data.</div>`;
+  }else{
+    itemSummary.innerHTML=`
+      <table class="sales-table">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th>Item / Plano</th>
+            <th>Quantidade</th>
+            <th>Total vendido</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${groupedRows.map(row=>`
+            <tr>
+              <td><span class="category-badge">${row.category}</span></td>
+              <td><strong>${row.item}</strong></td>
+              <td>${row.quantity}</td>
+              <td><strong>${money(row.total)}</strong></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>`;
+  }
+
+  // Lista detalhada de todas as vendas do dia
+  const detail=document.getElementById("dailySalesDetail");
+  const ordered=[...allSales].sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt));
+
+  if(!ordered.length){
+    detail.innerHTML=`<div class="notice">Nenhum lançamento registrado nesta data.</div>`;
+  }else{
+    detail.innerHTML=`
+      <table class="sales-table detailed">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Funcionário</th>
+            <th>Turno</th>
+            <th>Categoria</th>
+            <th>Item / Plano</th>
+            <th>Qtd.</th>
+            <th>Pagamento</th>
+            <th>Unitário</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ordered.map(sale=>`
+            <tr>
+              <td>${timeBR(sale.createdAt)}</td>
+              <td><strong>${sale.employee}</strong></td>
+              <td>${sale.shift}</td>
+              <td><span class="category-badge">${sale.category}</span></td>
+              <td>${sale.item}</td>
+              <td>${sale.quantity||1}</td>
+              <td>${sale.payment}</td>
+              <td>${money(sale.unitPrice)}</td>
+              <td><strong>${money(sale.total)}</strong></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>`;
+  }
 }
 
 function renderEmployees(){

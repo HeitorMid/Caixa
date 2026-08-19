@@ -10,11 +10,11 @@ Primeira versão funcional do sistema de caixa da academia Inova Fit.
 ## Incluído nesta versão
 - Abertura de caixa por funcionário, turno e data
 - Turnos fixos
-- Mensalidades
+- Mensalidades, incluindo plano trimestral de 3 meses por R$ 240,00
 - Esquenta/diária
 - Produtos do freezer
 - Acréscimo automático de R$ 1 por unidade no freezer para débito/crédito
-- Resumo por forma de pagamento
+- Resumo do expediente por categoria: Mensalidades, Esquentas e Freezer, com Total Geral
 - Histórico de caixas
 - Reabertura de caixa por qualquer funcionário
 - Resumo geral do dia
@@ -23,3 +23,7 @@ Primeira versão funcional do sistema de caixa da academia Inova Fit.
 
 ## Próxima etapa recomendada
 Trocar o `localStorage` por Firebase ou Supabase para sincronizar os dados entre os celulares/computadores da academia.
+
+## Alteração da versão 3
+- O Resumo Diário agora mostra um resumo por item/plano e uma listagem completa de todas as vendas do dia.
+- Cada lançamento detalha horário, funcionário, turno, categoria, item, quantidade, forma de pagamento, valor unitário e total.
