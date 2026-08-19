@@ -205,3 +205,26 @@ button{cursor:pointer}
 .sales-table tbody tr:last-child td{border-bottom:0}
 .sales-table tbody tr:hover{background:#fbfdfb}
 .category-badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:var(--green-soft);color:var(--green-dark);font-size:11px;font-weight:800}
+
+
+.delete-sale-btn{
+  border:1px solid #f1b6b6;
+  background:#fff5f5;
+  color:var(--red);
+  border-radius:7px;
+  padding:6px 9px;
+  font-size:11px;
+  font-weight:800;
+}
+.delete-sale-btn:hover{background:#ffe8e8}
+.recent-item{
+  grid-template-columns:55px 1fr auto auto;
+  align-items:center;
+}
+.modal-sale-row{gap:12px}
+.modal-sale-actions{display:flex;align-items:center;gap:10px}
+@media (max-width:650px){
+  .recent-item{grid-template-columns:48px 1fr auto}
+  .recent-item .delete-sale-btn{grid-column:2/-1;justify-self:end}
+  .modal-sale-actions{align-items:flex-end;flex-direction:column}
+}

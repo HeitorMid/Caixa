@@ -118,6 +118,7 @@ function renderCash(){
         <span>${timeBR(t.createdAt)}</span>
         <span>${t.category} — ${t.item}${t.quantity>1?` (${t.quantity})`:""}<br><small>${t.payment}</small></span>
         <strong>${money(t.total)}</strong>
+        <button class="delete-sale-btn" title="Excluir venda" onclick="deleteTransaction('${cash.id}','${t.id}')">Excluir</button>
       </div>
     `).join("");
   }
@@ -356,10 +357,48 @@ function viewCash(id){
     </div>
     <h4>Lançamentos</h4>
     <div class="settings-list static">
-      ${c.transactions.length?c.transactions.map(t=>`<div><span>${timeBR(t.createdAt)} • ${t.category} • ${t.item} × ${t.quantity}<br><small>${t.payment}</small></span><strong>${money(t.total)}</strong></div>`).join(""):"<div>Nenhum lançamento.</div>"}
+      ${c.transactions.length?c.transactions.map(t=>`<div class="modal-sale-row"><span>${timeBR(t.createdAt)} • ${t.category} • ${t.item} × ${t.quantity}<br><small>${t.payment}</small></span><span class="modal-sale-actions"><strong>${money(t.total)}</strong><button class="delete-sale-btn" onclick="deleteTransaction('${c.id}','${t.id}',true)">Excluir</button></span></div>`).join(""):"<div>Nenhum lançamento.</div>"}
     </div>
     <div class="modal-total"><span>Total</span><strong>${money(Object.values(totals).reduce((a,b)=>a+b,0))}</strong></div>
     <div class="modal-actions"><button class="secondary-btn" onclick="closeModal()">Fechar</button></div>`));
+}
+
+
+function deleteTransaction(cashId, transactionId, reopenDetails=false){
+  let cash=null;
+  let isCurrent=false;
+
+  if(state.currentCash?.id===cashId){
+    cash=state.currentCash;
+    isCurrent=true;
+  }else{
+    cash=state.history.find(c=>c.id===cashId);
+  }
+
+  if(!cash) return toast("Não foi possível localizar esse expediente.");
+
+  const transaction=cash.transactions.find(t=>t.id===transactionId);
+  if(!transaction) return toast("Venda não encontrada.");
+
+  const description=`${transaction.category} — ${transaction.item} — ${money(transaction.total)}`;
+  if(!confirm(`Deseja realmente excluir esta venda?\n\n${description}\n\nEssa ação atualizará os totais automaticamente.`)) return;
+
+  cash.transactions=cash.transactions.filter(t=>t.id!==transactionId);
+  cash.lastEditedAt=new Date().toISOString();
+
+  if(isCurrent){
+    state.currentCash=cash;
+  }
+
+  save();
+  render();
+  toast("Venda excluída e totais atualizados.");
+
+  if(reopenDetails && !isCurrent){
+    setTimeout(()=>viewCash(cashId), 50);
+  }else{
+    closeModal();
+  }
 }
 
 function reopenCash(id){
@@ -380,6 +419,7 @@ function renderDailySummary(){
     for(const t of (cash.transactions||[])){
       allSales.push({
         ...t,
+        cashId:cash.id,
         employee:cash.employee,
         shift:cash.shift,
         cashStatus:cash.status
@@ -462,6 +502,7 @@ function renderDailySummary(){
             <th>Pagamento</th>
             <th>Unitário</th>
             <th>Total</th>
+            <th>Ação</th>
           </tr>
         </thead>
         <tbody>
@@ -476,6 +517,7 @@ function renderDailySummary(){
               <td>${sale.payment}</td>
               <td>${money(sale.unitPrice)}</td>
               <td><strong>${money(sale.total)}</strong></td>
+              <td><button class="delete-sale-btn" onclick="deleteTransaction('${sale.cashId}','${sale.id}')">Excluir</button></td>
             </tr>
           `).join("")}
         </tbody>
@@ -533,6 +575,7 @@ document.getElementById("addEmployeeBtn").onclick=()=>{
 window.closeModal=closeModal;
 window.viewCash=viewCash;
 window.reopenCash=reopenCash;
+window.deleteTransaction=deleteTransaction;
 window.removeEmployee=removeEmployee;
 
 render();

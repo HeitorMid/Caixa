@@ -27,3 +27,9 @@ Trocar o `localStorage` por Firebase ou Supabase para sincronizar os dados entre
 ## Alteração da versão 3
 - O Resumo Diário agora mostra um resumo por item/plano e uma listagem completa de todas as vendas do dia.
 - Cada lançamento detalha horário, funcionário, turno, categoria, item, quantidade, forma de pagamento, valor unitário e total.
+
+## Alteração da versão 4
+- Agora é possível excluir uma venda lançada por engano.
+- A exclusão está disponível nos últimos lançamentos, no Resumo Diário detalhado e nos detalhes de caixas finalizados.
+- Antes de excluir, o sistema pede confirmação.
+- Após a exclusão, subtotais e totais são recalculados automaticamente.
