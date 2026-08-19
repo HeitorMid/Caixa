@@ -228,3 +228,23 @@ button{cursor:pointer}
   .recent-item .delete-sale-btn{grid-column:2/-1;justify-self:end}
   .modal-sale-actions{align-items:flex-end;flex-direction:column}
 }
+
+
+.cloud-status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.cloud-status.local{background:#f0f3f1;color:#667169}
+.cloud-status.connecting{background:#fff6dd;color:#8a6600}
+.cloud-status.online{background:#edf8f1;color:var(--green)}
+.cloud-status.syncing{background:#eef5ff;color:#2b66ad}
+.cloud-status.error{background:#fff0f0;color:var(--red)}
+@media (max-width:760px){
+  .cloud-status{display:none}
+}

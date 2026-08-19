@@ -39,6 +39,7 @@
           <p id="pageSubtitle">Painel principal</p>
         </div>
         <div class="top-meta">
+          <span id="cloudStatus" class="cloud-status local" title="Status da sincronização">● Modo local</span>
           <span id="todayLabel"></span>
           <span id="clockLabel"></span>
         </div>
@@ -239,5 +240,6 @@
   <div class="toast hidden" id="toast"></div>
 
   <script src="app.js"></script>
+  <script type="module" src="firebase-sync.js"></script>
 </body>
 </html>

@@ -40,10 +40,59 @@ function load(key, fallback){
     return v ?? fallback;
   }catch{return fallback;}
 }
+
+function getSerializableState(){
+  return {
+    employees:[...state.employees],
+    currentCash:state.currentCash ? JSON.parse(JSON.stringify(state.currentCash)) : null,
+    history:JSON.parse(JSON.stringify(state.history))
+  };
+}
+
+function applyRemoteState(remoteState){
+  if(!remoteState || typeof remoteState!=="object") return;
+
+  if(Array.isArray(remoteState.employees) && remoteState.employees.length){
+    state.employees=remoteState.employees;
+  }
+  state.currentCash=remoteState.currentCash || null;
+  state.history=Array.isArray(remoteState.history) ? remoteState.history : [];
+
+  // Mantém uma cópia local para o sistema continuar abrindo mesmo sem internet.
+  localStorage.setItem("inovafit_employees", JSON.stringify(state.employees));
+  localStorage.setItem("inovafit_current_cash", JSON.stringify(state.currentCash));
+  localStorage.setItem("inovafit_history", JSON.stringify(state.history));
+
+  render();
+}
+
+function setCloudStatus(status, text){
+  const el=document.getElementById("cloudStatus");
+  if(!el) return;
+  el.className=`cloud-status ${status}`;
+  el.textContent=`● ${text}`;
+  el.title=text;
+}
+
+// Ponte usada pelo módulo firebase-sync.js.
+window.InovaFitApp={
+  getState:getSerializableState,
+  applyRemoteState,
+  setCloudStatus
+};
 function save(){
   localStorage.setItem("inovafit_employees", JSON.stringify(state.employees));
   localStorage.setItem("inovafit_current_cash", JSON.stringify(state.currentCash));
   localStorage.setItem("inovafit_history", JSON.stringify(state.history));
+
+  // Quando o Firebase estiver configurado, também envia o estado para a nuvem.
+  // O salvamento local continua existindo como cache/fallback.
+  if(window.InovaFitCloud?.saveState){
+    window.InovaFitCloud.saveState(getSerializableState()).catch(err=>{
+      console.error("Falha ao sincronizar com Firebase:", err);
+      setCloudStatus("error", "Falha na sincronização");
+    });
+  }
 }
 function money(v){ return MONEY.format(Number(v||0)); }
 function isoDate(d=new Date()){

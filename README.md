@@ -33,3 +33,16 @@ Trocar o `localStorage` por Firebase ou Supabase para sincronizar os dados entre
 - A exclusão está disponível nos últimos lançamentos, no Resumo Diário detalhado e nos detalhes de caixas finalizados.
 - Antes de excluir, o sistema pede confirmação.
 - Após a exclusão, subtotais e totais são recalculados automaticamente.
+
+
+## Versão 5 — Firebase
+- Estrutura preparada para Cloud Firestore.
+- Sincronização em tempo real entre aparelhos.
+- Autenticação anônima em segundo plano, sem tela de login.
+- Cache local continua ativo como fallback.
+- Migração inicial do localStorage para a nuvem quando o Firestore estiver vazio.
+- Indicador visual do status da nuvem no topo.
+- Incluídos `firebase-config.js`, `firebase-sync.js`, `firestore.rules`, `firebase.json` e `FIREBASE_SETUP.md`.
+
+### Importante
+A integração só entra em funcionamento depois que os dados reais do projeto Firebase forem colocados em `firebase-config.js` e os serviços Authentication/Firestore forem ativados.
