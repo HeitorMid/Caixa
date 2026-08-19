@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inova Fit • Caixa</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">N</div>
+        <div>
+          <strong>INOVA FIT</strong>
+          <span>ACADEMIA</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-view="caixa">⌂ <span>Caixa<small>Painel principal</small></span></button>
+        <button class="nav-item" data-view="historico">↶ <span>Histórico<small>Caixas e lançamentos</small></span></button>
+        <button class="nav-item" data-view="resumo">▣ <span>Resumo diário<small>Total do dia</small></span></button>
+        <button class="nav-item" data-view="funcionarios">♙ <span>Funcionários<small>Gerenciar nomes</small></span></button>
+        <button class="nav-item" data-view="config">⚙ <span>Configurações<small>Planos e produtos</small></span></button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <strong>INOVA FIT</strong>
+        <span>Força que transforma!</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div>
+          <h1 id="pageTitle">Caixa</h1>
+          <p id="pageSubtitle">Painel principal</p>
+        </div>
+        <div class="top-meta">
+          <span id="todayLabel"></span>
+          <span id="clockLabel"></span>
+        </div>
+      </header>
+
+      <section class="content">
+        <div id="view-caixa" class="view active">
+          <section class="status-card">
+            <div class="status-item status-main">
+              <span class="dot"></span>
+              <div>
+                <strong id="cashStatus">CAIXA FECHADO</strong>
+                <small id="cashStatusSubtitle">Abra um expediente para começar</small>
+              </div>
+            </div>
+            <div class="status-item">
+              <small>Funcionário</small>
+              <strong id="statusEmployee">—</strong>
+            </div>
+            <div class="status-item">
+              <small>Turno</small>
+              <strong id="statusShift">—</strong>
+            </div>
+            <div class="status-item">
+              <small>Abertura</small>
+              <strong id="statusOpenedAt">—</strong>
+            </div>
+            <button id="openCashBtn" class="outline-btn">ABRIR CAIXA</button>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="launch-area">
+              <h2>O que deseja lançar?</h2>
+              <div class="launch-cards">
+                <article class="launch-card membership">
+                  <div class="card-icon">▤</div>
+                  <h3>MENSALIDADE</h3>
+                  <p>Planos da academia</p>
+                  <ul>
+                    <li>Família — R$ 75,00 por pessoa</li>
+                    <li>Casal — R$ 75,00 por pessoa</li>
+                    <li>Mensal normal — R$ 85,00</li>
+                    <li>3x por semana — R$ 65,00</li>
+                  </ul>
+                  <button class="primary-btn" data-launch="mensalidade">LANÇAR MENSALIDADE</button>
+                </article>
+
+                <article class="launch-card daily">
+                  <div class="card-icon">▦</div>
+                  <h3>ESQUENTA</h3>
+                  <p>Diária de treino</p>
+                  <div class="price-box"><small>Valor único</small><strong>R$ 10,00</strong></div>
+                  <button class="warning-btn" data-launch="esquenta">LANÇAR ESQUENTA</button>
+                </article>
+
+                <article class="launch-card freezer">
+                  <div class="card-icon">▯</div>
+                  <h3>FREEZER</h3>
+                  <p>Produtos disponíveis</p>
+                  <ul>
+                    <li>Água — R$ 3,00</li>
+                    <li>Monster — R$ 13,00</li>
+                    <li>Powerade — R$ 9,00</li>
+                    <li>Red Bull — R$ 13,00</li>
+                    <li>Coca — R$ 4,00</li>
+                  </ul>
+                  <button class="blue-btn" data-launch="freezer">LANÇAR FREEZER</button>
+                </article>
+              </div>
+            </section>
+
+            <aside class="summary-column">
+              <section class="panel">
+                <div class="panel-title">RESUMO DO EXPEDIENTE</div>
+                <div class="summary-row"><span>Dinheiro</span><strong id="sumDinheiro">R$ 0,00</strong></div>
+                <div class="summary-row"><span>Pix</span><strong id="sumPix">R$ 0,00</strong></div>
+                <div class="summary-row"><span>Débito</span><strong id="sumDebito">R$ 0,00</strong></div>
+                <div class="summary-row"><span>Crédito</span><strong id="sumCredito">R$ 0,00</strong></div>
+                <div class="summary-row total"><span>TOTAL GERAL</span><strong id="sumTotal">R$ 0,00</strong></div>
+              </section>
+
+              <section class="panel">
+                <div class="panel-title panel-title-flex">
+                  <span>ÚLTIMOS LANÇAMENTOS</span>
+                  <button class="text-btn" id="seeAllBtn">Ver todos</button>
+                </div>
+                <div id="recentTransactions" class="recent-list empty">Nenhum lançamento ainda.</div>
+              </section>
+
+              <button class="finish-btn" id="finishBtn" disabled>✓ FINALIZAR EXPEDIENTE</button>
+            </aside>
+          </div>
+        </div>
+
+        <div id="view-historico" class="view">
+          <section class="page-panel">
+            <div class="section-head">
+              <div>
+                <h2>Histórico de caixas</h2>
+                <p>Visualize, edite ou reabra qualquer expediente.</p>
+              </div>
+              <input type="date" id="historyDateFilter" />
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </section>
+        </div>
+
+        <div id="view-resumo" class="view">
+          <section class="page-panel">
+            <div class="section-head">
+              <div>
+                <h2>Resumo diário</h2>
+                <p>Soma de todos os turnos do dia.</p>
+              </div>
+              <input type="date" id="summaryDateFilter" />
+            </div>
+
+            <div class="daily-summary-grid">
+              <div class="metric-card"><span>Dinheiro</span><strong id="dailyDinheiro">R$ 0,00</strong></div>
+              <div class="metric-card"><span>Pix</span><strong id="dailyPix">R$ 0,00</strong></div>
+              <div class="metric-card"><span>Débito</span><strong id="dailyDebito">R$ 0,00</strong></div>
+              <div class="metric-card"><span>Crédito</span><strong id="dailyCredito">R$ 0,00</strong></div>
+              <div class="metric-card grand"><span>Total do dia</span><strong id="dailyTotal">R$ 0,00</strong></div>
+            </div>
+
+            <div id="dailyShiftList" class="history-list"></div>
+          </section>
+        </div>
+
+        <div id="view-funcionarios" class="view">
+          <section class="page-panel narrow">
+            <h2>Funcionários</h2>
+            <p>Os nomes ficam disponíveis na abertura do expediente.</p>
+            <div class="form-inline">
+              <input id="newEmployeeName" placeholder="Nome do funcionário" maxlength="30" />
+              <button id="addEmployeeBtn" class="primary-btn small">Adicionar</button>
+            </div>
+            <div id="employeeList" class="settings-list"></div>
+          </section>
+        </div>
+
+        <div id="view-config" class="view">
+          <section class="page-panel">
+            <h2>Configurações atuais</h2>
+            <p>Primeira versão: preços definidos no sistema. A edição de valores poderá ser acrescentada depois.</p>
+
+            <div class="config-grid">
+              <article>
+                <h3>Planos</h3>
+                <div class="settings-list static">
+                  <div><span>Família</span><strong>R$ 75,00 / pessoa</strong></div>
+                  <div><span>Casal</span><strong>R$ 75,00 / pessoa</strong></div>
+                  <div><span>Mensal normal</span><strong>R$ 85,00</strong></div>
+                  <div><span>3x por semana</span><strong>R$ 65,00</strong></div>
+                </div>
+              </article>
+              <article>
+                <h3>Freezer</h3>
+                <div class="settings-list static">
+                  <div><span>Água</span><strong>R$ 3,00</strong></div>
+                  <div><span>Monster</span><strong>R$ 13,00</strong></div>
+                  <div><span>Powerade</span><strong>R$ 9,00</strong></div>
+                  <div><span>Red Bull</span><strong>R$ 13,00</strong></div>
+                  <div><span>Coca</span><strong>R$ 4,00</strong></div>
+                </div>
+                <div class="notice">Cartão de crédito ou débito: + R$ 1,00 por unidade, somente no freezer.</div>
+              </article>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="modalBackdrop">
+    <div class="modal" id="modal"></div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
